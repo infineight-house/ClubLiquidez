@@ -193,11 +193,11 @@ export default function AcademyPage() {
             >
               <div className="flex items-center space-x-2">
                 <Clock className="w-5 h-5 text-neon-gold" />
-                <span>60 + 30 days Duration</span>
+                <span>30 + 30 days Duration</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Users className="w-5 h-5 text-neon-gold" />
-                <span>60 Days course + 30 days Live Sessions</span>
+                <span>30 Days course + 30 days Live Sessions</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Award className="w-5 h-5 text-neon-gold" />
@@ -232,11 +232,11 @@ export default function AcademyPage() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Total Duration</span>
-                  <span className="text-white font-semibold text-lg">60 + 30 Days</span>
+                  <span className="text-white font-semibold text-lg">30 + 30 Days</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Course Sessions</span>
-                  <span className="text-white font-semibold">60 Days</span>
+                  <span className="text-white font-semibold">30 Days</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Live Market Sessions</span>
@@ -256,6 +256,48 @@ export default function AcademyPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="bg-gradient-to-br from-neon-gold/20 to-neon-gold-champagne/20 rounded-2xl p-8 border border-neon-gold/30"
+            >
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="p-4 bg-neon-gold rounded-xl">
+                  <DollarSign className="w-8 h-8 text-black" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white">Zero Fees</h3>
+                  <p className="text-gray-300 text-sm">Investment in Your Future</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <div className="text-4xl font-bold text-neon-gold mb-2">$0</div>
+                  <p className="text-gray-300 text-sm">Zero Fees - Reach out to us for more details</p>
+                </div>
+                <div className="pt-4 border-t border-neon-gold/30 space-y-2">
+                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <CheckCircle2 className="w-4 h-4 text-neon-gold" />
+                    <span>All modules included</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <CheckCircle2 className="w-4 h-4 text-neon-gold" />
+                    <span>Lifetime access to materials</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <CheckCircle2 className="w-4 h-4 text-neon-gold" />
+                    <span>Community access</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <CheckCircle2 className="w-4 h-4 text-neon-gold" />
+                    <span>Certificate of completion</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="bg-dark-800 rounded-2xl p-8 border border-gray-700"
             >
               <div className="flex items-center space-x-4 mb-6">
                 <div className="p-4 bg-neon-gold rounded-xl">

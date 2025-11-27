@@ -100,17 +100,21 @@ const TestimonialsSection = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6"
           >
-            What Our <span className="gradient-text">Members Say</span>
+            Social <span className="gradient-text">Proof</span>
           </motion.h2>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl text-gray-300 max-w-3xl mx-auto"
+            className="text-xl text-gray-300 max-w-3xl mx-auto space-y-2 mb-8"
           >
-            Join thousands of successful traders who have transformed their trading journey with ClubLiquidez
-          </motion.p>
+            <p><span className="text-neon-gold font-semibold">190+</span> active copy clients</p>
+            <p>Years of consistent breakout execution</p>
+            <p>Trusted automation models</p>
+            <p>A serious, growing trading community</p>
+            <p className="text-gray-400 text-lg mt-4">This strengthens trust without bragging.</p>
+          </motion.div>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

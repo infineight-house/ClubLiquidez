@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Navbar from '@/components/layout/Navbar'
@@ -18,43 +18,136 @@ import {
   Settings,
   Play,
   Pause,
-  Square
+  Square,
+  Loader2,
+  AlertCircle
 } from 'lucide-react'
 
 const TradingToolsPage = () => {
   const [calculatorType, setCalculatorType] = useState<'position' | 'risk' | 'profit'>('position')
-  const [positionSize, setPositionSize] = useState('10000')
+  const [positionSize, setPositionSize] = useState('1')
   const [entryPrice, setEntryPrice] = useState('100')
-  const [stopLoss, setStopLoss] = useState('95')
+  const [stopLoss, setStopLoss] = useState('1')
   const [takeProfit, setTakeProfit] = useState('110')
-  const [riskPercentage, setRiskPercentage] = useState('2')
-  const [accountSize, setAccountSize] = useState('50000')
+  const [riskPercentage, setRiskPercentage] = useState('1')
+  const [accountSize, setAccountSize] = useState('100000')
   const [selectedCurrencyPair, setSelectedCurrencyPair] = useState('EUR/USD')
   const [amountCurrency, setAmountCurrency] = useState('USD')
 
   // Currency pairs and currencies data
   const currencyPairs = [
-    'EUR/USD', 'GBP/USD', 'USD/JPY', 'USD/CHF', 'AUD/USD', 'USD/CAD', 'NZD/USD',
-    'EUR/GBP', 'EUR/JPY', 'GBP/JPY', 'CHF/JPY', 'EUR/CHF', 'AUD/JPY', 'CAD/JPY',
-    'NZD/JPY', 'GBP/CHF', 'AUD/CHF', 'CAD/CHF', 'NZD/CHF', 'AUD/CAD', 'NZD/CAD',
-    'AUD/NZD', 'EUR/AUD', 'GBP/AUD', 'EUR/CAD', 'GBP/CAD', 'EUR/NZD', 'GBP/NZD'
+    'AUD/CAD', 'AUD/CHF', 'AUD/JPY', 'AUD/NZD', 'AUD/USD',
+    'BTC/USD',
+    'CAD/CHF', 'CAD/JPY',
+    'CHF/JPY',
+    'EUR/AUD', 'EUR/CAD', 'EUR/CHF', 'EUR/GBP', 'EUR/JPY', 'EUR/NZD', 'EUR/USD',
+    'GBP/AUD', 'GBP/CAD', 'GBP/CHF', 'GBP/JPY', 'GBP/NZD', 'GBP/USD',
+    'NZD/CAD', 'NZD/CHF', 'NZD/JPY', 'NZD/USD',
+    'USD/CAD', 'USD/CHF', 'USD/JPY',
+    'XAU/USD'
   ]
 
   const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CHF', 'AUD', 'CAD', 'NZD', 'BTC', 'ETH']
 
   // Real-time calculation state
   const [isCalculating, setIsCalculating] = useState(false)
+  
+  // Exchange rate state for hybrid model
+  const [exchangeRate, setExchangeRate] = useState<number | null>(null)
+  const [isLoadingRate, setIsLoadingRate] = useState(false)
+  const [rateError, setRateError] = useState<string | null>(null)
+  const [rateLastUpdated, setRateLastUpdated] = useState<Date | null>(null)
 
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   })
 
+  // Extract quote currency from currency pair
+  const getQuoteCurrency = (pair: string): string => {
+    const parts = pair.split('/')
+    if (parts.length === 2) {
+      return parts[1] // Quote currency is after the slash
+    }
+    // Handle special cases
+    if (pair.includes('XAU')) return 'USD'
+    if (pair.includes('BTC')) return 'USD'
+    return 'USD' // Default fallback
+  }
+
+  // Fetch real-time exchange rate
+  const fetchExchangeRate = async (fromCurrency: string, toCurrency: string): Promise<number | null> => {
+    // Skip if currencies are the same
+    if (fromCurrency === toCurrency) return 1
+
+    // Skip for crypto/commodities - use approximate rates
+    if (['BTC', 'ETH', 'XAU'].includes(fromCurrency) || ['BTC', 'ETH', 'XAU'].includes(toCurrency)) {
+      return null // Will use approximate calculation
+    }
+
+    try {
+      setIsLoadingRate(true)
+      setRateError(null)
+
+      // Use exchangerate-api.com free endpoint (no API key required for basic usage)
+      // Alternative: You can use fixer.io, exchangerate-api.io, or any other free Forex API
+      const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`)
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch exchange rate')
+      }
+
+      const data = await response.json()
+      const rate = data.rates[toCurrency]
+
+      if (!rate) {
+        throw new Error(`Exchange rate not found for ${toCurrency}`)
+      }
+
+      setExchangeRate(rate)
+      setRateLastUpdated(new Date())
+      setIsLoadingRate(false)
+      return rate
+    } catch (error) {
+      console.error('Error fetching exchange rate:', error)
+      setRateError('Unable to fetch real-time rate. Using approximate calculation.')
+      setIsLoadingRate(false)
+      return null // Fallback to approximate
+    }
+  }
+
+  // Effect to fetch exchange rate when currency conversion is needed
+  useEffect(() => {
+    const quoteCurrency = getQuoteCurrency(selectedCurrencyPair)
+    
+    // Only fetch if account currency differs from quote currency
+    if (amountCurrency !== quoteCurrency) {
+      // Debounce the API call
+      const timer = setTimeout(() => {
+        fetchExchangeRate(amountCurrency, quoteCurrency)
+      }, 500)
+
+      return () => clearTimeout(timer)
+    } else {
+      // Reset exchange rate when no conversion needed
+      setExchangeRate(null)
+      setRateError(null)
+    }
+  }, [selectedCurrencyPair, amountCurrency])
+
+  // Effect to update default trade size based on currency pair
+  useEffect(() => {
+    if (selectedCurrencyPair === 'XAU/USD') {
+      setPositionSize('0.001')
+    } else {
+      setPositionSize('1')
+    }
+  }, [selectedCurrencyPair])
+
   // Real-time calculation effect
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      if (parseFloat(accountSize) > 0 && parseFloat(riskPercentage) > 0 && 
-          parseFloat(entryPrice) > 0 && parseFloat(stopLoss) > 0 && parseFloat(takeProfit) > 0) {
+      if (parseFloat(accountSize) > 0 && parseFloat(riskPercentage) > 0 && parseFloat(stopLoss) > 0) {
         setIsCalculating(true)
         // Small delay to show calculation animation
         setTimeout(() => setIsCalculating(false), 300)
@@ -62,40 +155,116 @@ const TradingToolsPage = () => {
     }, 100) // Debounce for 100ms
 
     return () => clearTimeout(timer)
-  }, [accountSize, riskPercentage, entryPrice, stopLoss, takeProfit, selectedCurrencyPair, amountCurrency])
+  }, [accountSize, riskPercentage, stopLoss, selectedCurrencyPair, amountCurrency, exchangeRate])
 
-  // Calculate position sizing
+  // Calculate position sizing based on risk and stop loss in pips
   const calculatePosition = () => {
-    const entry = parseFloat(entryPrice)
-    const stop = parseFloat(stopLoss)
     const risk = parseFloat(riskPercentage) / 100
     const account = parseFloat(accountSize)
+    const stopLossPips = parseFloat(stopLoss)
+    const quoteCurrency = getQuoteCurrency(selectedCurrencyPair)
 
-    const riskAmount = account * risk
-    const priceRisk = Math.abs(entry - stop)
-    const positionSize = riskAmount / priceRisk
-    const totalValue = positionSize * entry
-    const potentialProfit = positionSize * (parseFloat(takeProfit) - entry)
-    const potentialLoss = positionSize * (entry - stop)
-    const riskRewardRatio = potentialProfit / potentialLoss
+    // HYBRID MODEL: Convert account size using real-time exchange rate if needed
+    let convertedAccount = account
+    let conversionInfo = ''
 
-    // Calculate lot size
-    // Standard lot = 100,000 units
-    // Mini lot = 10,000 units
-    // Micro lot = 1,000 units
-    const standardLot = 100000
-    const miniLot = 10000
-    const microLot = 1000
+    if (amountCurrency !== quoteCurrency && exchangeRate !== null) {
+      // Use real-time exchange rate for conversion
+      convertedAccount = account * exchangeRate
+      conversionInfo = ` (${account.toLocaleString()} ${amountCurrency} × ${exchangeRate.toFixed(4)} = ${convertedAccount.toFixed(2)} ${quoteCurrency})`
+    } else if (amountCurrency !== quoteCurrency) {
+      // Fallback: Use approximate calculation (no real-time rate available)
+      // For approximate, we'll still use the account size but note it's not converted
+      conversionInfo = ' (approximate - real-time rate unavailable)'
+    }
 
-    const standardLots = positionSize / standardLot
-    const miniLots = positionSize / miniLot
-    const microLots = positionSize / microLot
+    // Calculate risk amount in quote currency
+    const riskAmount = convertedAccount * risk
+
+    // Pip value calculation
+    // For most major pairs: 1 pip = $10 per standard lot (100,000 units)
+    // For JPY pairs: 1 pip = $9.09 per standard lot (approximately)
+    // For XAU/USD: 1 pip = $0.01 per oz, so for 100 oz (1 standard lot) = $1.00
+    // For BTC/USD: Use approximate calculation
+    const isJPYPair = selectedCurrencyPair.includes('JPY')
+    const isXAU = selectedCurrencyPair.includes('XAU')
+    const isBTC = selectedCurrencyPair.includes('BTC')
+    
+    let pipValuePerStandardLot = 10.0
+    if (isJPYPair) {
+      pipValuePerStandardLot = 9.09
+    } else if (isXAU) {
+      // For XAU/USD: 1 pip = $0.01 per oz
+      // 1 standard lot = 100 oz, so 1 pip = $1.00 per standard lot
+      pipValuePerStandardLot = 1.0
+    } else if (isBTC) {
+      pipValuePerStandardLot = 10.0 // Approximate for BTC
+    }
+
+    // Calculate position size in units
+    let positionSizeInUnits = 0
+    
+    if (isXAU) {
+      // For XAU/USD: Calculate directly in oz
+      // Risk Amount = Position Size (oz) * Stop Loss Pips * $0.01 per pip per oz
+      // Position Size (oz) = Risk Amount / (Stop Loss Pips * $0.01)
+      // Since 1 pip = $0.01 per oz
+      positionSizeInUnits = riskAmount / (stopLossPips * 0.01)
+    } else {
+      // For forex pairs: Use standard lot calculation
+      // Risk Amount = Position Size (in standard lots) * Stop Loss Pips * Pip Value
+      // Position Size (standard lots) = Risk Amount / (Stop Loss Pips * Pip Value)
+      const positionSizeInStandardLots = riskAmount / (stopLossPips * pipValuePerStandardLot)
+      
+      // Adjust standard lot size for different instruments
+      let standardLotSize = 100000
+      if (isBTC) {
+        standardLotSize = 1 // BTC standard lot is 1 BTC
+      }
+      
+      positionSizeInUnits = positionSizeInStandardLots * standardLotSize
+    }
+
+    // Calculate lot sizes (adjust for different instruments)
+    let standardLot = 100000
+    let miniLot = 10000
+    let microLot = 1000
+    
+    if (isXAU) {
+      standardLot = 100 // Gold: 100 oz = 1 standard lot
+      miniLot = 10 // 10 oz = 1 mini lot
+      microLot = 1 // 1 oz = 1 micro lot
+    } else if (isBTC) {
+      standardLot = 1 // BTC: 1 BTC = 1 standard lot
+      miniLot = 0.1 // 0.1 BTC = 1 mini lot
+      microLot = 0.01 // 0.01 BTC = 1 micro lot
+    }
+
+    const standardLots = positionSizeInUnits / standardLot
+    const miniLots = positionSizeInUnits / miniLot
+    const microLots = positionSizeInUnits / microLot
 
     // Determine the most appropriate lot size display
     let lotSizeDisplay = ''
     let lotType = ''
     
-    if (standardLots >= 1) {
+    if (isXAU) {
+      // For gold, show lot size (standard, mini, or micro lots)
+      if (standardLots >= 1) {
+        lotSizeDisplay = standardLots.toFixed(3)
+        lotType = 'Standard Lots'
+      } else if (miniLots >= 1) {
+        lotSizeDisplay = miniLots.toFixed(3)
+        lotType = 'Mini Lots'
+      } else {
+        lotSizeDisplay = microLots.toFixed(3)
+        lotType = 'Micro Lots'
+      }
+    } else if (isBTC) {
+      // For BTC, show in BTC
+      lotSizeDisplay = positionSizeInUnits.toFixed(4)
+      lotType = 'BTC'
+    } else if (standardLots >= 1) {
       lotSizeDisplay = standardLots.toFixed(2)
       lotType = 'Standard Lots'
     } else if (miniLots >= 1) {
@@ -107,17 +276,15 @@ const TradingToolsPage = () => {
     }
 
     return {
-      positionSize: positionSize.toFixed(2),
-      totalValue: totalValue.toFixed(2),
+      positionSize: Math.round(positionSizeInUnits).toLocaleString(),
       riskAmount: riskAmount.toFixed(2),
-      potentialProfit: potentialProfit.toFixed(2),
-      potentialLoss: potentialLoss.toFixed(2),
-      riskRewardRatio: riskRewardRatio.toFixed(2),
       lotSize: lotSizeDisplay,
       lotType: lotType,
       standardLots: standardLots.toFixed(3),
       miniLots: miniLots.toFixed(3),
-      microLots: microLots.toFixed(3)
+      microLots: microLots.toFixed(3),
+      conversionInfo,
+      usingRealTimeRate: exchangeRate !== null && amountCurrency !== quoteCurrency
     }
   }
 
@@ -205,393 +372,260 @@ const TradingToolsPage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start"
+            className="max-w-4xl mx-auto"
           >
-            {/* Calculator Form */}
+            {/* Calculator Container */}
             <div className="bg-dark-800 rounded-2xl border border-gray-700 p-8">
-              <div className="flex items-center space-x-3 mb-6">
-                <Calculator className="w-6 h-6 text-neon-gold" />
-                <h2 className="text-2xl font-bold text-white">Position Calculator</h2>
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-white mb-2">Position Size Calculator</h2>
+                <p className="text-sm text-gray-400 mt-2">
+                  Hybrid Model: Real-time exchange rates + Approximate pip values
+                </p>
               </div>
 
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Currency Pair
+              {/* Values Section */}
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-300 mb-6">Values</h3>
+                <div className="space-y-4">
+                  {/* Currency Pair */}
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-sm font-medium text-gray-300 min-w-[140px]">
+                      Currency Pair:
                     </label>
                     <select
                       value={selectedCurrencyPair}
                       onChange={(e) => setSelectedCurrencyPair(e.target.value)}
-                      className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
+                      className="flex-1 px-4 py-2 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
                     >
                       {currencyPairs.map((pair) => (
                         <option key={pair} value={pair}>{pair}</option>
                       ))}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Amount Currency
+
+                  {/* Account Currency */}
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-sm font-medium text-gray-300 min-w-[140px]">
+                      Account Currency:
                     </label>
                     <select
                       value={amountCurrency}
                       onChange={(e) => setAmountCurrency(e.target.value)}
-                      className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
+                      className="flex-1 px-4 py-2 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
                     >
                       {currencies.map((currency) => (
                         <option key={currency} value={currency}>{currency}</option>
                       ))}
                     </select>
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Account Size ({amountCurrency})
-                  </label>
-                  <input
-                    type="number"
-                    value={accountSize}
-                    onChange={(e) => setAccountSize(e.target.value)}
-                    className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
-                    placeholder="Enter account size"
-                  />
-                </div>
+                  {/* Account Size */}
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-sm font-medium text-gray-300 min-w-[140px]">
+                      Account Size:
+                    </label>
+                    <input
+                      type="number"
+                      value={accountSize}
+                      onChange={(e) => setAccountSize(e.target.value)}
+                      className="flex-1 px-4 py-2 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
+                      placeholder="Enter account size"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Risk Percentage (%)
-                  </label>
-                  <input
-                    type="number"
-                    value={riskPercentage}
-                    onChange={(e) => setRiskPercentage(e.target.value)}
-                    className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
-                    placeholder="Enter risk percentage"
-                    step="0.1"
-                    min="0.1"
-                    max="100"
-                  />
-                </div>
+                  {/* Risk Ratio */}
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-sm font-medium text-gray-300 min-w-[140px]">
+                      Risk Ratio, %:
+                    </label>
+                    <input
+                      type="number"
+                      value={riskPercentage}
+                      onChange={(e) => setRiskPercentage(e.target.value)}
+                      className="flex-1 px-4 py-2 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
+                      placeholder="Enter risk percentage"
+                      step="0.1"
+                      min="0.1"
+                      max="100"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Entry Price ({amountCurrency})
-                  </label>
-                  <input
-                    type="number"
-                    value={entryPrice}
-                    onChange={(e) => setEntryPrice(e.target.value)}
-                    className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
-                    placeholder="Enter entry price"
-                    step="0.00001"
-                    min="0"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Stop Loss ({amountCurrency})
+                  {/* Stop-Loss in Pips */}
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-sm font-medium text-gray-300 min-w-[140px]">
+                      Stop-Loss, Pips:
                     </label>
                     <input
                       type="number"
                       value={stopLoss}
                       onChange={(e) => setStopLoss(e.target.value)}
-                      className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
-                      placeholder="Enter stop loss"
-                      step="0.00001"
+                      className="flex-1 px-4 py-2 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
+                      placeholder="Enter stop loss in pips"
+                      step="0.1"
                       min="0"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Take Profit ({amountCurrency})
+
+                  {/* Trade Size (Lots) */}
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-sm font-medium text-gray-300 min-w-[140px]">
+                      Trade Size <span className="underline">(Lots)</span>:
                     </label>
                     <input
                       type="number"
-                      value={takeProfit}
-                      onChange={(e) => setTakeProfit(e.target.value)}
-                      className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
-                      placeholder="Enter take profit"
-                      step="0.00001"
+                      value={positionSize}
+                      onChange={(e) => setPositionSize(e.target.value)}
+                      className="flex-1 px-4 py-2 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold transition-all duration-200"
+                      placeholder="1"
+                      step="0.01"
                       min="0"
                     />
                   </div>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-4 mt-6">
+                  <button
+                    onClick={() => {
+                      setAccountSize('50000')
+                      setRiskPercentage('2')
+                      setStopLoss('')
+                      // Set default trade size based on currency pair
+                      setPositionSize(selectedCurrencyPair === 'XAU/USD' ? '0.001' : '1')
+                      setEntryPrice('')
+                      setTakeProfit('')
+                    }}
+                    className="flex-1 px-6 py-3 bg-gray-600 hover:bg-gray-500 text-white rounded-lg font-medium transition-colors duration-200"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    onClick={() => {
+                      // Calculation happens automatically via calculatePosition
+                      setIsCalculating(true)
+                      setTimeout(() => setIsCalculating(false), 500)
+                    }}
+                    className="flex-1 px-6 py-3 bg-neon-gold hover:bg-neon-gold-champagne text-black rounded-lg font-medium transition-colors duration-200"
+                  >
+                    Calculate
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Results */}
-            <div className="bg-dark-800 rounded-2xl border border-gray-700 p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-white">Calculation Results</h3>
-                {isCalculating && (
-                  <div className="flex items-center space-x-2 text-neon-gold">
-                    <div className="w-4 h-4 border-2 border-neon-gold border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-sm">Calculating...</span>
-                  </div>
-                )}
-              </div>
-              
-              {parseFloat(accountSize) > 0 && parseFloat(riskPercentage) > 0 && parseFloat(entryPrice) > 0 && parseFloat(stopLoss) > 0 && parseFloat(takeProfit) > 0 ? (
-                <div className="space-y-6">
-                  {(() => {
-                    const results = calculatePosition()
-                    return (
-                      <>
-                        <div className="flex justify-between items-center p-4 bg-dark-700 rounded-lg">
-                          <span className="text-gray-300">Position Size</span>
-                          <span className="text-white font-semibold">{results.positionSize} units</span>
-                        </div>
+              {/* Exchange Rate Status */}
+              {(() => {
+                const quoteCurrency = getQuoteCurrency(selectedCurrencyPair)
+                const needsConversion = amountCurrency !== quoteCurrency
+                
+                if (needsConversion) {
+                  return (
+                    <div className="mb-6 p-4 bg-dark-700 rounded-lg border border-gray-600">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-300">
+                          Exchange Rate Status:
+                        </span>
+                        {isLoadingRate ? (
+                          <div className="flex items-center gap-2 text-neon-gold">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span className="text-xs">Fetching rate...</span>
+                          </div>
+                        ) : exchangeRate ? (
+                          <div className="flex items-center gap-2 text-green-400">
+                            <span className="text-xs">✓ Real-time</span>
+                            {rateLastUpdated && (
+                              <span className="text-xs text-gray-500">
+                                ({rateLastUpdated.toLocaleTimeString()})
+                              </span>
+                            )}
+                          </div>
+                        ) : rateError ? (
+                          <div className="flex items-center gap-2 text-yellow-400">
+                            <AlertCircle className="w-4 h-4" />
+                            <span className="text-xs">Approximate</span>
+                          </div>
+                        ) : null}
+                      </div>
+                      {exchangeRate && (
+                        <p className="text-xs text-gray-400">
+                          1 {amountCurrency} = {exchangeRate.toFixed(4)} {quoteCurrency}
+                        </p>
+                      )}
+                      {rateError && (
+                        <p className="text-xs text-yellow-400 mt-1">{rateError}</p>
+                      )}
+                    </div>
+                  )
+                }
+                return null
+              })()}
 
-                        <div className="flex justify-between items-center p-4 bg-dark-700 rounded-lg">
-                          <span className="text-gray-300">Lot Size</span>
-                          <span className="text-white font-semibold">{results.lotSize} {results.lotType}</span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center p-4 bg-dark-700 rounded-lg">
-                          <span className="text-gray-300">Total Value</span>
-                          <span className="text-white font-semibold">{amountCurrency} {results.totalValue}</span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center p-4 bg-dark-700 rounded-lg">
-                          <span className="text-gray-300">Risk Amount</span>
-                          <span className="text-white font-semibold">{amountCurrency} {results.riskAmount}</span>
-                        </div>
-
-                        <div className="flex justify-between items-center p-4 bg-dark-700 rounded-lg">
-                          <span className="text-gray-300">Potential Profit</span>
-                          <span className="text-white font-semibold text-neon-gold-champagne">{amountCurrency} {results.potentialProfit}</span>
-                        </div>
-
-                        <div className="flex justify-between items-center p-4 bg-dark-700 rounded-lg">
-                          <span className="text-gray-300">Potential Loss</span>
-                          <span className="text-white font-semibold text-red-400">{amountCurrency} {results.potentialLoss}</span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center p-4 bg-dark-700 rounded-lg">
-                          <span className="text-gray-300">Risk/Reward Ratio</span>
-                          <span className="text-white font-semibold">
-                            {results.riskRewardRatio}:1
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between items-center p-4 bg-dark-700 rounded-lg">
-                          <span className="text-gray-300">Currency Pair</span>
-                          <span className="text-white font-semibold">{selectedCurrencyPair}</span>
-                        </div>
-
-                        {/* Lot Size Breakdown */}
-                        <div className="mt-6 p-4 bg-dark-600 rounded-lg border border-gray-600">
-                          <h4 className="text-sm font-medium text-gray-300 mb-3">Lot Size Breakdown</h4>
-                          <div className="grid grid-cols-3 gap-3 text-xs">
-                            <div className="text-center">
-                              <div className="text-gray-400">Standard Lots</div>
-                              <div className="text-white font-semibold">{results.standardLots}</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-gray-400">Mini Lots</div>
-                              <div className="text-white font-semibold">{results.miniLots}</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-gray-400">Micro Lots</div>
-                              <div className="text-white font-semibold">{results.microLots}</div>
+              {/* Results Section */}
+              <div className="border-t border-gray-700 pt-8">
+                <h3 className="text-lg font-semibold text-gray-300 mb-6">Results</h3>
+                {parseFloat(accountSize) > 0 && parseFloat(riskPercentage) > 0 && parseFloat(stopLoss) > 0 ? (
+                  <div className="space-y-4">
+                    {(() => {
+                      const results = calculatePosition()
+                      const quoteCurrency = getQuoteCurrency(selectedCurrencyPair)
+                      return (
+                        <>
+                          <div className="flex items-center justify-between gap-4">
+                            <label className="text-sm font-medium text-gray-300 min-w-[140px]">
+                              Money, {quoteCurrency}:
+                            </label>
+                            <div className="flex-1 flex flex-col items-end">
+                              <input
+                                type="text"
+                                readOnly
+                                value={results.riskAmount || '0.00'}
+                                className="w-full px-4 py-2 bg-dark-700 border border-gray-600 rounded-lg text-white text-right"
+                              />
+                              {results.conversionInfo && (
+                                <span className="text-xs text-gray-500 mt-1">
+                                  {results.conversionInfo}
+                                </span>
+                              )}
                             </div>
                           </div>
-                        </div>
-                      </>
-                    )
-                  })()}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="text-gray-400 mb-4">
-                    <Calculator className="w-12 h-12 mx-auto mb-3" />
-                    <p>Fill in all fields to see calculation results</p>
+                          <div className="flex items-center justify-between gap-4">
+                            <label className="text-sm font-medium text-gray-300 min-w-[140px]">
+                              Units:
+                            </label>
+                            <input
+                              type="text"
+                              readOnly
+                              value={results.positionSize || '0'}
+                              className="flex-1 px-4 py-2 bg-dark-700 border border-gray-600 rounded-lg text-white text-right"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between gap-4">
+                            <label className="text-sm font-medium text-gray-300 min-w-[140px]">
+                              Sizing:
+                            </label>
+                            <input
+                              type="text"
+                              readOnly
+                              value={`${results.lotSize || '0'} ${results.lotType || 'lots'}`}
+                              className="flex-1 px-4 py-2 bg-dark-700 border border-gray-600 rounded-lg text-white text-right"
+                            />
+                          </div>
+                          {results.usingRealTimeRate && (
+                            <div className="mt-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                              <p className="text-xs text-green-400 flex items-center gap-2">
+                                <span>✓</span>
+                                Using real-time exchange rate for accurate calculation
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      )
+                    })()}
                   </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Charting Tools */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="bg-dark-800 rounded-2xl border border-gray-700 p-8"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-3">
-                <BarChart3 className="w-6 h-6 text-neon-gold-champagne" />
-                <h2 className="text-2xl font-bold text-white">Advanced Charting</h2>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
-                </Button>
-                <Button variant="primary" size="sm">
-                  <Play className="w-4 h-4 mr-2" />
-                  Live Trading
-                </Button>
-              </div>
-            </div>
-
-            {/* Chart Placeholder */}
-            <div className="h-96 bg-dark-700 rounded-lg border border-gray-600 flex items-center justify-center">
-              <div className="text-center">
-                <BarChart3 className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                <p className="text-gray-400">Interactive TradingView Chart</p>
-                <p className="text-sm text-gray-500 mt-2">Professional-grade charting with 100+ indicators</p>
-              </div>
-            </div>
-
-            {/* Chart Controls */}
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-400">Timeframe:</span>
-                <div className="flex space-x-2">
-                  {['1m', '5m', '15m', '1h', '4h', '1d'].map((tf) => (
-                    <Button key={tf} variant="ghost" size="sm">
-                      {tf}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-400">Indicators:</span>
-                <div className="flex space-x-2">
-                  {['MA', 'RSI', 'MACD', 'BB'].map((ind) => (
-                    <Button key={ind} variant="outline" size="sm">
-                      {ind}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Price Alerts */}
-      <section className="py-16 bg-dark-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12"
-          >
-            {/* Alert Form */}
-            <div className="bg-dark-800 rounded-2xl border border-gray-700 p-8">
-              <div className="flex items-center space-x-3 mb-6">
-                <Bell className="w-6 h-6 text-neon-gold-dark" />
-                <h2 className="text-2xl font-bold text-white">Price Alerts</h2>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Symbol
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="BTC/USD"
-                    className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Alert Price
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="45000"
-                      className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold"
-                    />
+                ) : (
+                  <div className="text-center py-8 text-gray-400">
+                    <p>Fill in all required fields to see results</p>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Condition
-                    </label>
-                    <select className="w-full px-4 py-3 bg-dark-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-neon-gold">
-                      <option>Above</option>
-                      <option>Below</option>
-                      <option>Crosses</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Notification Method
-                  </label>
-                  <div className="space-y-2">
-                    <label className="flex items-center space-x-3">
-                      <input type="checkbox" className="rounded border-gray-600 bg-dark-700 text-neon-gold focus:ring-neon-gold" />
-                      <span className="text-gray-300">Email</span>
-                    </label>
-                    <label className="flex items-center space-x-3">
-                      <input type="checkbox" className="rounded border-gray-600 bg-dark-700 text-neon-gold focus:ring-neon-gold" />
-                      <span className="text-gray-300">Push Notification</span>
-                    </label>
-                    <label className="flex items-center space-x-3">
-                      <input type="checkbox" className="rounded border-gray-600 bg-dark-700 text-neon-gold focus:ring-neon-gold" />
-                      <span className="text-gray-300">SMS</span>
-                    </label>
-                  </div>
-                </div>
-
-                <Button variant="primary" className="w-full">
-                  Create Alert
-                </Button>
-              </div>
-            </div>
-
-            {/* Active Alerts */}
-            <div className="bg-dark-800 rounded-2xl border border-gray-700 p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Active Alerts</h3>
-              
-              <div className="space-y-4">
-                {[
-                  { symbol: 'BTC/USD', price: 45000, condition: 'Above', status: 'Active' },
-                  { symbol: 'ETH/USD', price: 2800, condition: 'Below', status: 'Active' },
-                  { symbol: 'AAPL', price: 180, condition: 'Crosses', status: 'Triggered' }
-                ].map((alert, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-dark-700 rounded-lg">
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-white font-semibold">{alert.symbol}</span>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          alert.status === 'Active' ? 'bg-neon-gold-champagne/20 text-neon-gold-champagne' : 'bg-neon-amber/20 text-neon-amber'
-                        }`}>
-                          {alert.status}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-400">
-                        {alert.condition} ${alert.price.toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm">
-                        <Pause className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Square className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+                )}
               </div>
             </div>
           </motion.div>

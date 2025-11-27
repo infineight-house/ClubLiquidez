@@ -4,6 +4,9 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { TrendingUp, Calendar, DollarSign, BarChart3 } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
 const GoldCycleSection = () => {
   const [ref, inView] = useInView({
@@ -55,18 +58,30 @@ const GoldCycleSection = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6"
           >
-            The <span className="gradient-text">February Gold Cycle</span>
+            Gold Repeats One Pattern <span className="gradient-text">Every Year</span>
           </motion.h2>
-
+          
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl text-gray-300 max-w-3xl mx-auto"
+            transition={{ duration: 0.8, delay: 0.35 }}
+            className="text-xl text-gray-300 max-w-3xl mx-auto mb-4"
           >
-            Historical data reveals a consistent pattern: February consistently shows the strongest 
-            performance for gold trading. Our strategies are optimized to capitalize on this cycle.
+            And Most Traders Miss It.
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-lg text-gray-400 max-w-3xl mx-auto space-y-2 mb-6"
+          >
+            <p><span className="text-neon-gold font-semibold">2024</span> — February breakout → New All-Time High</p>
+            <p><span className="text-neon-gold font-semibold">2025</span> — February breakout → New All-Time High</p>
+            <p className="text-white font-semibold mt-4">Two years. Same month. Same behaviour. Same no-retracement rally.</p>
+            <p className="text-neon-gold font-semibold text-xl mt-4">Now we're approaching February 2026.</p>
+            <p className="text-gray-300 mt-4">This is why Club Liquidez positions early — not after the move starts. Our breakout model is built for exactly this kind of momentum.</p>
+          </motion.div>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -112,10 +127,16 @@ const GoldCycleSection = () => {
             </div>
 
             <div className="mt-6 p-4 bg-neon-gold/10 border border-neon-gold/30 rounded-lg">
-              <div className="flex items-center space-x-2 text-neon-gold">
+              <div className="flex items-center space-x-2 text-neon-gold mb-4">
                 <TrendingUp className="w-5 h-5" />
-                <span className="font-semibold">February Peak: 95% Historical Performance</span>
+                <span className="font-semibold">February Peak: Consistent Breakout Pattern</span>
               </div>
+              <Link href="/copy-trading">
+                <Button variant="primary" size="md" className="w-full group">
+                  Start Copy Trading
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
           </motion.div>
 

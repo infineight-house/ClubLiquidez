@@ -9,6 +9,7 @@ import GoldCycleSection from '@/components/home/GoldCycleSection'
 import StrategyHighlightsSection from '@/components/home/StrategyHighlightsSection'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
 import StatsSection from '@/components/home/StatsSection'
+import FinalCTASection from '@/components/home/FinalCTASection'
 
 export default function HomePage() {
   return (
@@ -22,6 +23,7 @@ export default function HomePage() {
       <StrategyHighlightsSection />
       <TestimonialsSection />
       <StatsSection />
+      <FinalCTASection />
       <Footer />
     </main>
   )

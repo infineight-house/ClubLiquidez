@@ -4,7 +4,8 @@ import React, { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { gsap } from 'gsap'
 import { Button } from '@/components/ui/Button'
-import { ArrowRight, TrendingUp, BarChart3, Zap } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowRight, TrendingUp, BarChart3, Zap, BookOpen } from 'lucide-react'
 
 const HeroSection = () => {
   const chartRef = useRef<HTMLDivElement>(null)
@@ -34,18 +35,18 @@ const HeroSection = () => {
   const features = [
     {
       icon: TrendingUp,
-      title: 'Real-time Data',
-      description: 'Live market feeds with millisecond precision'
+      title: 'Copy Trading',
+      description: 'Real-time trade replication'
     },
     {
       icon: BarChart3,
-      title: 'Advanced Analytics',
-      description: 'Professional-grade charting and analysis tools'
+      title: 'Algo Trading',
+      description: 'Trade automation based on predefined rules'
     },
     {
-      icon: Zap,
-      title: 'Lightning Fast',
-      description: 'Execute trades in under 10ms'
+      icon: BookOpen,
+      title: 'Master Course',
+      description: 'Comprehensive trading from basics to advanced strategies'
     }
   ]
 
@@ -100,7 +101,7 @@ const HeroSection = () => {
                 className="inline-flex items-center space-x-2 px-4 py-2 bg-dark-800 rounded-full border border-neon-gold/20"
               >
                 <div className="w-2 h-2 bg-neon-gold rounded-full animate-pulse" />
-                <span className="text-sm text-neon-gold">Trading Platform</span>
+                <span className="text-sm text-neon-gold">Powered by Precision</span>
               </motion.div>
               
               <motion.h1
@@ -109,11 +110,7 @@ const HeroSection = () => {
                 transition={{ delay: 0.3 }}
                 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight"
               >
-                <span className="gradient-text">Unlock Liquidity.</span>
-                <br />
-                <span className="text-white">Trade Smarter.</span>
-                <br />
-                <span className="gradient-text">ClubLiquidez.</span>
+                <span className="gradient-text">CLUB LIQUIDEZ</span>
               </motion.h1>
               
               <motion.p
@@ -122,8 +119,16 @@ const HeroSection = () => {
                 transition={{ delay: 0.4 }}
                 className="text-lg sm:text-xl text-gray-300 max-w-lg"
               >
-                Experience the future of trading with our cutting-edge platform. 
-                Real-time data, advanced analytics, and lightning-fast execution.
+                A premium trading ecosystem offering: Copy Trading, Algo Models, Master-Level Trading Course, and Membership Club.
+              </motion.p>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45 }}
+                className="text-base sm:text-lg text-gray-400 max-w-lg"
+              >
+                Designed for traders who want structure, discipline, and long-term compounding, not hype.
               </motion.p>
             </div>
 
@@ -134,13 +139,17 @@ const HeroSection = () => {
               transition={{ delay: 0.5 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              {/* <Button variant="primary" size="lg" className="group">
-                Start Trading
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="secondary" size="lg">
-                Explore Markets
-              </Button> */}
+              <Link href="/auth">
+                <Button variant="primary" size="lg" className="group">
+                  Enter the Ecosystem
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <Link href="/about">
+                <Button variant="secondary" size="lg">
+                  Explore Services
+                </Button>
+              </Link>
             </motion.div>
 
             {/* Features */}
@@ -210,10 +219,10 @@ const HeroSection = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-neon-gold rounded-full" />
-                    <span className="text-sm text-white font-medium">BTC/USD</span>
+                    <span className="text-sm text-white font-medium">XAU/USD</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-bold text-white">$43,250.00</div>
+                    <div className="text-lg font-bold text-white">$4,320.00</div>
                     <div className="text-sm text-neon-gold-champagne">+2.45%</div>
                   </div>
                 </div>
@@ -253,14 +262,14 @@ const HeroSection = () => {
               transition={{ delay: 1 }}
               className="mt-8 text-center"
             >
-              <p className="text-sm text-gray-400 mb-4">Trusted by leading exchanges</p>
+              {/* <p className="text-sm text-gray-400 mb-4">Trusted by leading exchanges</p>
               <div className="flex items-center justify-center space-x-8 opacity-60">
                 {['Binance', 'Coinbase', 'Kraken', 'FTX'].map((exchange) => (
                   <div key={exchange} className="text-gray-500 font-medium text-sm">
                     {exchange}
                   </div>
                 ))}
-              </div>
+              </div> */}
             </motion.div>
           </motion.div>
         </div>

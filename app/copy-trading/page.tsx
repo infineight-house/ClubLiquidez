@@ -4,20 +4,10 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
+import Footer from '@/components/layout/Footer' 
 import { Button } from '@/components/ui/Button'
-import { 
-  TrendingUp, 
-  BookOpen, 
-  BarChart3, 
-  Calendar,
-  User,
-  Tag,
-  ArrowRight,
-  Eye,
-  Clock,
-  Star
-} from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 interface Article {
   id: string
@@ -52,141 +42,150 @@ const CopyTradingPage = () => {
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-              What is <span className="gradient-text">Copy Trading</span>?
+              <span className="gradient-text">Copy Trading</span>
             </h1>
             
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-              Copy trading allows you to mirror the trades of experienced, rule-based traders in real time — without managing every setup yourself.
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-4">
+              Automatically mirror trades from a single, disciplined master account built on strict strategy and low-risk execution.
+            </p>
+            
+            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
+              Copy trading with Club Liquidez gives you:
             </p>
           </div>
         </div>
       </section>
 
-      {/* Why It Works Section */}
+      {/* Features Section */}
       <section className="py-20 bg-dark-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-              Why <span className="gradient-text">Copy Trading</span> Works
-            </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            <div className="bg-dark-800 rounded-2xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-2">Real-time trade replication</h3>
+            </div>
+            <div className="bg-dark-800 rounded-2xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-2">Controlled, consistent risk</h3>
+            </div>
+            <div className="bg-dark-800 rounded-2xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-2">Automated position sizing (auto-scale equity)</h3>
+            </div>
+            <div className="bg-dark-800 rounded-2xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-2">A long-term compounding approach</h3>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-dark-800 rounded-2xl p-6 border border-gray-700 text-center">
-              <div className="w-12 h-12 bg-neon-gold-champagne/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-brain w-6 h-6 text-neon-gold-champagne">
-                  <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.44 2.5 2.5 0 0 1-.54-2.5 2.5 2.5 0 0 1 1.5-3.5"></path>
-                  <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.44 2.5 2.5 0 0 0 .54-2.5 2.5 2.5 0 0 0-1.5-3.5"></path>
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">No Emotional Execution</h3>
-              <p className="text-gray-400 text-sm">Remove human emotions from your trading decisions</p>
+          <div className="max-w-4xl mx-auto space-y-12">
+            <div>
+              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+                For <span className="gradient-text">whom?</span>
+              </h2>
+              <ul className="space-y-3 text-gray-300 text-lg">
+                <li>– Traders who want stability, not stress</li>
+                <li>– Working professionals who can't watch charts</li>
+                <li>– Beginners who want structured growth</li>
+                <li>– Investors who prefer low-risk, rule-based trading</li>
+              </ul>
             </div>
 
-            <div className="bg-dark-800 rounded-2xl p-6 border border-gray-700 text-center">
-              <div className="w-12 h-12 bg-neon-gold-champagne/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-bar-chart3 w-6 h-6 text-neon-gold-champagne">
-                  <path d="M3 3v18h18"></path>
-                  <path d="M18 17V9"></path>
-                  <path d="M13 17V5"></path>
-                  <path d="M8 17v-3"></path>
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Transparent Performance</h3>
-              <p className="text-gray-400 text-sm">Full access to historical performance data</p>
-            </div>
-
-            <div className="bg-dark-800 rounded-2xl p-6 border border-gray-700 text-center">
-              <div className="w-12 h-12 bg-neon-gold-champagne/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-sliders w-6 h-6 text-neon-gold-champagne">
-                  <path d="M4 21v-7"></path>
-                  <path d="M4 10V3"></path>
-                  <path d="M12 21v-9"></path>
-                  <path d="M12 8V3"></path>
-                  <path d="M20 21v-5"></path>
-                  <path d="M20 10V3"></path>
-                  <path d="M1 14h6"></path>
-                  <path d="M9 8h6"></path>
-                  <path d="M17 16h6"></path>
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Set Your Risk</h3>
-              <p className="text-gray-400 text-sm">Control your lot size and risk preferences</p>
-            </div>
-
-            <div className="bg-dark-800 rounded-2xl p-6 border border-gray-700 text-center">
-              <div className="w-12 h-12 bg-neon-gold-champagne/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-briefcase w-6 h-6 text-neon-gold-champagne">
-                  <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Ideal for Busy Professionals</h3>
-              <p className="text-gray-400 text-sm">Perfect for those with limited trading time</p>
+            <div>
+              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+                Why is this <span className="gradient-text">advisable?</span>
+              </h2>
+              <p className="text-gray-300 text-lg leading-relaxed">
+                Because your capital stays in your own account, you stay in full control, while the system mirrors a strategy designed for consistency, not hype, not gambling, not oversized risk.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How to Start Section */}
+      {/* Why Copy Trading Section */}
       <section className="py-20 bg-dark-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-              How to <span className="gradient-text">Start</span>
+          <div className="max-w-4xl mx-auto space-y-8">
+            <h2 className="text-3xl lg:text-4xl font-bold text-white text-center mb-12">
+              Why Copy Trading Is Your First Step Toward <span className="gradient-text">Real Financial Freedom</span>
             </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-neon-gold-champagne/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-neon-gold-champagne">1</span>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-3">Choose Your Strategy</h3>
-              <p className="text-gray-400">Select from our private vault of proven strategies</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-neon-gold-champagne/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-neon-gold-champagne">2</span>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-3">Connect Your Account</h3>
-              <p className="text-gray-400">Link your trading account securely</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-neon-gold-champagne/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-neon-gold-champagne">3</span>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-3">Set Risk Preferences</h3>
-              <p className="text-gray-400">Configure your risk and lot size settings</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-neon-gold-champagne/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-neon-gold-champagne">4</span>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-3">Let It Trade</h3>
-              <p className="text-gray-400">The strategy trades on your behalf</p>
+            
+            <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
+              <p>
+                Most people spend their entire lives working for money. They trade their hours… their energy… their health… for a salary that stops the moment they stop working.
+              </p>
+              <p>
+                Copy trading breaks that cycle. With one disciplined master account and automated execution, your capital begins to work quietly in the background, whether you're at your job, travelling, sleeping, or spending time with people you love.
+              </p>
+              <p className="text-neon-gold font-semibold">
+                This isn't a shortcut. It's a structure.
+              </p>
+              <p>A system where:</p>
+              <ul className="list-disc list-inside space-y-2 ml-4">
+                <li>your decisions aren't driven by emotion</li>
+                <li>your trades aren't random</li>
+                <li>your money grows through disciplined, rule-based execution</li>
+                <li>your progress doesn't depend on your screen time</li>
+              </ul>
+              <p>
+                For working professionals, students, business owners, or anyone tired of chasing the markets, copy trading is the simplest way to start building wealth on autopilot.
+              </p>
+              <p>
+                Not hype. Not gambling. Not signals. Just a clean, low-risk model that compounds slowly and steadily, the way real wealth is built.
+              </p>
+              <p className="text-neon-gold font-semibold text-xl">
+                Your money should work even when you don't. This is where that begins.
+              </p>
             </div>
           </div>
         </div>
       </section>
+
 
       {/* CTA Section */}
       <section className="py-20 bg-dark-900">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-            Ready to <span className="gradient-text">Start Copy Trading</span>?
+            Ready to Start <span className="gradient-text">Compounding With Precision?</span>
           </h2>
-          <p className="text-xl text-gray-300 mb-8">
-            Want access to our private strategy vault?
-          </p>
-          <button className="inline-flex items-center justify-center rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed button-primary text-white font-semibold px-8 py-4 text-lg">
-            Apply Now
-          </button>
+          
+          <div className="space-y-4 text-gray-300 text-lg">
+            <p>Your capital stays in your control,</p>
+            <p>the system handles the execution,</p>
+            <p>and the growth happens quietly in the background.</p>
+            <p className="text-white font-semibold">You don't need experience. You just need discipline and patience.</p>
+          </div>
+
+          <div className="bg-dark-800 rounded-2xl p-8 border border-gray-700 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+              <div>
+                <p className="text-gray-400 text-sm mb-1">Minimum Required Capital</p>
+                <p className="text-white font-semibold text-lg">$300</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm mb-1">Auto-scale equity</p>
+                <p className="text-neon-gold font-semibold">✓ Included</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm mb-1">Strategy</p>
+                <p className="text-white font-semibold text-lg">Strict low-risk</p>
+              </div>
+            </div>
+            <p className="text-gray-400 text-sm mt-6">February is coming, momentum doesn't wait. Join now!</p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          > </motion.div>
+          <Link href="/auth">
+            <Button variant="primary" size="lg" className="group">
+              Join Copy Trading →
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
         </div>
       </section>
+      <Footer />
     </main>
   );
 } 

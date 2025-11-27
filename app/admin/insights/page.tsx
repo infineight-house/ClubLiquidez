@@ -108,10 +108,12 @@ const AdminInsightsPage = () => {
   const handleEdit = (insight: Insight) => {
     setEditingId(insight.id)
     setIsCreating(false)
+    // Convert HTML content back to plain text for editing
+    const plainTextContent = convertHTMLToText(insight.content)
     setFormData({
       title: insight.title,
       excerpt: insight.excerpt,
-      content: insight.content,
+      content: plainTextContent,
       author: insight.author,
       category: insight.category,
       tags: insight.tags || [],
@@ -124,6 +126,75 @@ const AdminInsightsPage = () => {
     })
   }
 
+  // Convert plain text to HTML, preserving line breaks and paragraphs
+  const convertTextToHTML = (text: string): string => {
+    if (!text) return ''
+    
+    // Check if content already contains HTML tags
+    const hasHTML = /<[^>]+>/.test(text)
+    
+    if (hasHTML) {
+      // Content already has HTML, return as-is (but ensure it's valid)
+      return text
+    }
+    
+    // Plain text - convert to HTML
+    // First, escape HTML special characters
+    let escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+    
+    // Handle quotes - preserve them as-is (they're already escaped)
+    // Convert straight quotes to smart quotes if desired, but keep them for now
+    
+    // Split by double line breaks (paragraphs)
+    const paragraphs = escaped.split(/\n\s*\n/)
+    
+    // Process each paragraph
+    const htmlParagraphs = paragraphs.map(paragraph => {
+      const trimmed = paragraph.trim()
+      if (!trimmed) return ''
+      
+      // Check if paragraph starts with quote-like pattern (optional)
+      // For now, just process normally
+      
+      // Convert single line breaks within paragraph to <br>
+      const withBreaks = trimmed.replace(/\n/g, '<br>')
+      
+      // Wrap in paragraph tag
+      return `<p>${withBreaks}</p>`
+    }).filter(p => p !== '')
+    
+    return htmlParagraphs.join('\n')
+  }
+
+  // Convert HTML back to plain text for editing
+  const convertHTMLToText = (html: string): string => {
+    if (!html) return ''
+    
+    // Remove paragraph tags and convert to double line breaks
+    let text = html.replace(/<\/p>/gi, '\n\n')
+    text = text.replace(/<p[^>]*>/gi, '')
+    
+    // Convert <br> tags to single line breaks
+    text = text.replace(/<br\s*\/?>/gi, '\n')
+    
+    // Decode HTML entities
+    text = text
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&nbsp;/g, ' ')
+    
+    // Clean up extra whitespace
+    text = text.replace(/\n{3,}/g, '\n\n')
+    
+    return text.trim()
+  }
+
   const handleSave = async () => {
     if (!formData.title || !formData.excerpt || !formData.content || !formData.author) {
       toast.error('Please fill in all required fields')
@@ -131,9 +202,13 @@ const AdminInsightsPage = () => {
     }
 
     try {
+      // Convert content to HTML format preserving formatting
+      const htmlContent = convertTextToHTML(formData.content)
+      
       if (isCreating) {
         const { data, error } = await createInsight({
           ...formData,
+          content: htmlContent,
           author_id: user?.id
         })
 
@@ -160,7 +235,10 @@ const AdminInsightsPage = () => {
           loadInsights()
         }
       } else if (editingId) {
-        const { data, error } = await updateInsight(editingId, formData)
+        const { data, error } = await updateInsight(editingId, {
+          ...formData,
+          content: htmlContent
+        })
 
         if (error) {
           toast.error('Failed to update insight')

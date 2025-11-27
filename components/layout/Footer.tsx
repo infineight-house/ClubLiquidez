@@ -3,6 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { 
   Twitter, 
@@ -84,12 +85,27 @@ const Footer = () => {
               viewport={{ once: true }}
               className="space-y-4"
             >
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-neon rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">CL</span>
+              <Link href="/" className="flex items-center space-x-2">
+                <div className="relative w-6 h-6 md:w-8 md:h-8">
+                  <Image
+                    src="/LC.png"
+                    alt="ClubLiquidez Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
                 </div>
-                <span className="text-xl font-bold gradient-text">ClubLiquidez</span>
-              </div>
+                <div className="relative h-6 md:h-8 w-auto">
+                  <Image
+                    src="/LCP.png"
+                    alt="ClubLiquidez"
+                    width={200}
+                    height={32}
+                    className="object-contain h-full w-auto"
+                    priority
+                  />
+                </div>
+              </Link>
               <p className="text-gray-400 max-w-md">
                 Unlock liquidity and trade smarter with our cutting-edge platform. 
                 Join thousands of traders worldwide.

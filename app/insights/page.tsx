@@ -7,7 +7,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { Button } from '@/components/ui/Button'
 import { format } from 'date-fns'
-import { getInsights, incrementInsightViews, type Insight } from '@/lib/supabase/insights'
+import { getInsights, type Insight } from '@/lib/supabase/insights'
 import { 
   TrendingUp, 
   BookOpen, 
@@ -92,11 +92,9 @@ const InsightsPage = () => {
     }
   }
 
-  const handleArticleClick = async (articleId: string) => {
-    // Increment views when article is clicked
-    await incrementInsightViews(articleId)
-    // Reload to update view count
-    loadInsights()
+  const handleArticleClick = (articleId: string) => {
+    // Navigate to full blog post page
+    window.location.href = `/insights/${articleId}`
   }
 
   const [ref, inView] = useInView({
