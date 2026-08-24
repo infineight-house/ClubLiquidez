@@ -19,7 +19,7 @@ export default function HomePage() {
       <BrandIntroSection />
       <PillarsSection />
       <TrustSection />
-      <MarketCycleSection />
+      {/* <MarketCycleSection /> */}
       <StrategyHighlightsSection />
       <TestimonialsSection />
       <StatsSection />

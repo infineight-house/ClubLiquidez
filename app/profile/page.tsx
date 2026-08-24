@@ -18,7 +18,13 @@ export default function ProfilePage() {
     setMounted(true)
   }, [])
 
-  if (loading) {
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth')
+    }
+  }, [loading, user, router])
+
+  if (loading || !user) {
     return (
       <main className="min-h-screen bg-white text-black">
         <Navbar />
@@ -28,11 +34,6 @@ export default function ProfilePage() {
         <Footer />
       </main>
     )
-  }
-
-  if (!user) {
-    router.push('/auth')
-    return null
   }
 
   return (

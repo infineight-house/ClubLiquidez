@@ -1,44 +1,30 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { gsap } from 'gsap'
 import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
 import { ArrowRight, Clock, Shield, Sparkles } from 'lucide-react'
+import RealtimeBinanceChart from './RealtimeBinanceChart'
 
 const HeroSection = () => {
-  const chartRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (chartRef.current) {
-      const tl = gsap.timeline({ repeat: -1, yoyo: true })
-      tl.to(chartRef.current, { duration: 2, scale: 1.04, ease: 'power2.inOut' })
-      gsap.to(chartRef.current, {
-        y: -16,
-        duration: 3,
-        ease: 'power2.inOut',
-        yoyo: true,
-        repeat: -1,
-      })
-    }
-  }, [])
 
   const features = [
     {
       icon: Clock,
-      title: 'London · NY overlap',
-      description: 'How we map liquidity windows for the market',
+      title: 'Technicals',
+      description: 'Using price action to map liquidity windows',
     },
     {
       icon: Shield,
-      title: 'Risk built for metals',
-      description: 'Ticks, spread & position sizing for the market',
+      title: 'Risk Management',
+      description: 'position sizing for the market',
     },
     {
       icon: Sparkles,
-      title: 'Live lab + mentorship',
-      description: 'Walkthroughs, reviews, no copy-trading',
+      title: 'Market Psychology',
+      description: 'Maintain discipline and emotional control',
     },
   ]
 
@@ -52,6 +38,22 @@ const HeroSection = () => {
             transition={{ duration: 0.75 }}
             className="space-y-8"
           >
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="relative h-16 sm:h-20 md:h-24 w-auto"
+            >
+              <Image
+                src="/liquidez.png"
+                alt="ClubLiquidez Logo"
+                width={440}
+                height={68}
+                className="object-contain h-full w-auto"
+                priority
+              />
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -70,8 +72,8 @@ const HeroSection = () => {
               transition={{ delay: 0.2 }}
               className="text-5xl sm:text-6xl lg:text-[4.25rem] xl:text-7xl font-bold tracking-tight leading-[1.08] text-black"
             >
-              Master <span className="text-[#b89428]">Market</span>{' '}
-              with structure.
+              Build The <span className="text-[#b89428]">Skill</span>{' '}
+              to read the market.
             </motion.h1>
 
             <motion.p
@@ -80,8 +82,8 @@ const HeroSection = () => {
               transition={{ delay: 0.28 }}
               className="text-lg sm:text-xl text-neutral-600 max-w-xl leading-relaxed tracking-tight"
             >
-              ClubLiquidez teaches how institutional-grade traders <em className="text-black not-italic font-semibold">read</em>{' '}
-              bullion: sessions, volatility regimes, risk for leveraged metals, and the psychology to stay consistent.
+
+              Learn how to read market <em className="text-black not-italic font-semibold">structure</em>, liquidity, sessions, volatility and risk,  and turn that framework into a repeatable trading process.
             </motion.p>
 
             <motion.p
@@ -90,7 +92,8 @@ const HeroSection = () => {
               transition={{ delay: 0.34 }}
               className="text-base text-neutral-600 max-w-xl leading-relaxed border-l-2 border-brand-gold pl-4"
             >
-              Small cohorts · Live drills · Optional classroom days in Kanchipuram · No signals · No managed accounts
+              Small cohorts • Live market drills • Mentorship • Optional classroom sessions in Kanchipuram.
+              No signals. No managed accounts. No promises of returns.
             </motion.p>
 
             <motion.div
@@ -101,7 +104,7 @@ const HeroSection = () => {
             >
               <Link href="/contact">
                 <Button variant="primary" size="lg" className="group">
-                  Book an intake call
+                  Book a Mentor Call
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
@@ -110,7 +113,7 @@ const HeroSection = () => {
                   variant="outline"
                   size="lg"
                 >
-                  Market curriculum
+                  Explore the Curriculum
                 </Button>
               </Link>
             </motion.div>
@@ -139,50 +142,9 @@ const HeroSection = () => {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.75, delay: 0.1 }}
-            className="relative"
+            className="relative w-full"
           >
-            <div
-              ref={chartRef}
-              className="relative w-full h-[22rem] sm:h-96 rounded-2xl border border-neutral-200 bg-neutral-50 overflow-hidden shadow-xl"
-            >
-              <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10">
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-neutral-500 font-medium">Spot market · teaching chart</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="w-2.5 h-2.5 rounded-full bg-brand-gold" />
-                    <span className="text-black font-semibold">XAUUSD</span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-neutral-500 text-xs">Illustrative</p>
-                  <p className="text-xl font-bold tracking-tight text-black">2,648.20</p>
-                  <p className="text-sm text-[#b89428] font-semibold">+0.42%</p>
-                </div>
-              </div>
-
-              <div className="absolute inset-0 top-20 px-5 pb-6">
-                <div className="flex items-end justify-between h-full gap-1">
-                  {[...Array(24)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ height: 0 }}
-                      animate={{ height: `${22 + ((i * 17) % 65)}%` }}
-                      transition={{ duration: 0.9, delay: i * 0.04, ease: 'easeOut' }}
-                      className={`flex-1 max-w-[10px] rounded-sm ${
-                        i % 4 === 0 ? 'bg-brand-gold' : 'bg-neutral-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="absolute bottom-4 left-4 right-4 z-10 rounded-lg bg-white border border-neutral-200 px-4 py-3 shadow-sm">
-                <p className="text-xs text-neutral-700">
-                  <span className="text-[#b89428] font-semibold">Session lab:</span> mark liquidity, define invalidation,
-                  size for volatility — before you touch a platform.
-                </p>
-              </div>
-            </div>
+            <RealtimeBinanceChart />
           </motion.div>
         </div>
       </div>

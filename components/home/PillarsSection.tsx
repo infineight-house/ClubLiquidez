@@ -18,12 +18,12 @@ const PillarsSection = () => {
       icon: GraduationCap,
       title: 'Market Core Curriculum',
       description:
-        'From tick behaviour to higher-timeframe narrative—learn how market prices absorb news, sessions, and flows.',
+        'From price behaviour to higher-timeframe context — learn how markets move through structure, liquidity, sessions and volatility.',
       features: [
-        'Liquidity & volatility regimes',
-        'Chart frameworks used in live labs',
-        'Macro context without prediction hype',
-        'Homework + structured reviews',
+        'Market structure & liquidity',
+        'Multi-time frame analysis',
+        'Context before execution',
+        'Structured chart reviews',
       ],
       href: '/academy',
       color: 'neon-gold',
@@ -31,10 +31,13 @@ const PillarsSection = () => {
     },
     {
       icon: Shield,
-      title: 'Risk Architecture for Metals',
+      title: 'Risk Architecture & Execution',
       description:
-        'Position sizing, spread awareness, and drawdown planning tailored to the market—not generic FX templates.',
-      features: ['Ticks, points & contract logic', 'Stops that respect volatility', 'Journal metrics we actually grade'],
+        'Build a risk framework that adapts to volatility, position size, spread and drawdown across different instruments.',
+      features: ['Position sizing',
+        'Volatility & spread',
+        'Drawdown management',
+        'Execution planning'],
       href: '/tools',
       color: 'neon-gold-champagne',
       gradient: 'from-neon-gold-champagne/15 to-neon-amber/15',
@@ -43,8 +46,8 @@ const PillarsSection = () => {
       icon: Users,
       title: 'Mentorship & Live Labs',
       description:
-        'Small groups, camera-on drills, and educator feedback on your process—not copy-paste trade ideas.',
-      features: ['Weekly live sessions', 'Playback-friendly recordings', 'Accountability checkpoints'],
+        'Small-group learning with live chart walkthroughs, structured drills and feedback on how you think — not what to copy.',
+      features: ['Live market sessions', 'Playback & replay reviews', 'Accountability checkpoints'],
       href: '/programs',
       color: 'neon-gold-dark',
       gradient: 'from-neon-gold-dark/15 to-neon-gold/15',
@@ -54,20 +57,20 @@ const PillarsSection = () => {
   const lastTwoPillars = [
     {
       icon: Bot,
-      title: 'Automation Literacy',
+      title: 'Automation & Algo Development',
       description:
-        'Understand how EAs and scripts behave on MT4/MT5 so you can audit logic—education only, no bot sales.',
-      features: ['Indicator vs strategy separation', 'Backtest hygiene', 'When automation helps—and hurts'],
+        'Learn how to translate your own trading rules into indicators, Expert Advisors and automated systems — without relying on pre-built black boxes.',
+      features: ['Strategy → rules → automation', 'Indicator & EA development', 'Backtesting & validation', 'Automation risk & safeguards'],
       href: '/algo-trading',
       color: 'neon-amber',
       gradient: 'from-neon-amber/15 to-neon-gold/15',
     },
     {
       icon: Crown,
-      title: 'Programs & Cohorts',
+      title: 'Performance & Trader Development',
       description:
-        'Rolling intakes for beginners, intensive market specialist weekends, and hybrid online + classroom tracks.',
-      features: ['Seat caps per cohort', 'Kanchipuram classroom days', 'Partner-friendly schedules'],
+        'Build consistency through journaling, trade review, performance analysis and structured feedback — turning individual trades into measurable improvement.',
+      features: ['Trading journal & performance metrics', 'Backtesting & replay', 'Error identification', 'Structured review & refinement'],
       href: '/programs',
       color: 'neon-gold',
       gradient: 'from-neon-gold/15 to-neon-gold-champagne/15',
@@ -107,7 +110,7 @@ const PillarsSection = () => {
         </div>
 
         <Link href={pillar.href}>
-          <Button variant="secondary" size="md" className="w-full group justify-center">
+          <Button variant="secondary" size="md" className="w-full group justify-center text-[#b89428]">
             Explore {pillar.title.split(' ')[0]}
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
           </Button>
@@ -132,7 +135,7 @@ const PillarsSection = () => {
           </div>
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-black mb-4">
-            Built for <span className="text-[#b89428]">serious market students</span>
+            Built for <span className="text-[#b89428]">Traders who want a process</span>
           </h2>
           <p className="text-lg text-neutral-700 max-w-2xl mx-auto">
             Five pillars. One mandate: teach durable process for trading education—not adrenaline-driven clicks.

@@ -3,7 +3,20 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { Shield, CheckCircle2, TrendingUp, Ban, MessageCircle } from 'lucide-react'
+import {
+  Shield,
+  Ban,
+  BarChart3,
+  ShieldCheck,
+  Brain,
+  Compass,
+  LineChart,
+  Scale,
+  Lock,
+  ZapOff,
+  Megaphone,
+  FileText
+} from 'lucide-react'
 
 const TrustSection = () => {
   const [ref, inView] = useInView({
@@ -14,47 +27,48 @@ const TrustSection = () => {
   const trustFactors = [
     {
       icon: Ban,
-      title: 'No signal vending',
-      description: 'We teach you to classify setups—not spoon-feed entries timed for screenshots.',
+      title: 'Learn the reasoning, not the signal',
+      description: 'We teach you how to analyse a market and build your own trade decisions — not copy entries from screenshots.',
       color: 'neon-gold',
     },
     {
-      icon: Shield,
-      title: 'No leverage theatrics',
-      description: 'Risk lectures come before platform demos. Always.',
+      icon: Scale,
+      title: 'Risk before execution',
+      description: 'Understand position sizing, leverage, volatility and drawdown before putting a strategy to work.',
       color: 'neon-gold-champagne',
     },
     {
-      icon: CheckCircle2,
-      title: 'No portfolio management',
-      description: 'Educators coach process; they do not trade your capital.',
+      icon: Lock,
+      title: 'Education, not account management',
+      description: 'We teach the process. You make your own trading decisions and remain responsible for your capital.',
       color: 'neon-gold-dark',
     },
     {
-      icon: TrendingUp,
-      title: 'No guaranteed returns',
-      description: 'Markets owe nobody profits—we prepare you for variance.',
+      icon: ZapOff,
+      title: 'Process over promises',
+      description: 'Markets are uncertain. We focus on building skills, discipline and a repeatable process — not promising outcomes.',
       color: 'neon-amber',
     },
     {
-      icon: Ban,
-      title: 'No influencer hype',
-      description: 'Calendar invites beat TikTok motivation.',
+      icon: Megaphone,
+      title: 'Learn by doing',
+      description: 'Apply concepts through chart work, structured exercises, backtesting, review and live market practice.',
       color: 'neon-gold',
     },
     {
-      icon: CheckCircle2,
-      title: 'No opaque fee traps',
-      description: 'Program pricing discussed upfront during intake.',
+      icon: FileText,
+      title: 'Transparent learning paths',
+      description: 'Programs, expectations and pricing are clearly explained before you enrol. No surprise upsells.',
       color: 'neon-gold-champagne',
     },
   ]
 
   const whatWeOffer = [
-    { title: 'Session IQ', icon: TrendingUp },
-    { title: 'Risk grammar', icon: Shield },
-    { title: 'Psychological drills', icon: CheckCircle2 },
-    { title: 'Community critique', icon: MessageCircle },
+    { title: 'Market Structure', icon: BarChart3 },
+    { title: 'Risk Management', icon: ShieldCheck },
+    { title: 'Psychological drills', icon: Brain },
+    { title: 'Strategy Development', icon: Compass },
+    { title: 'Performance Review', icon: LineChart },
   ]
 
   return (
@@ -73,10 +87,10 @@ const TrustSection = () => {
           </div>
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-black mb-5">
-            Why learners pick <span className="text-[#b89428]">ClubLiquidez</span>
+            A different way to learn the market
           </h2>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto tracking-tight">
-            Market education needs friction—in the right places.
+            Structured education. Practical application. No Shortcuts
           </p>
         </motion.div>
 
@@ -127,8 +141,7 @@ const TrustSection = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-center text-neutral-700 mt-12 font-medium max-w-2xl mx-auto text-base"
         >
-          If you want entertainment trading content, there are faster feeds. If you want syllabus-grade rigor for the market,
-          stay here.
+          No shortcuts. No hype. Just structured market education built to develop independent traders.
         </motion.p>
       </div>
     </section>

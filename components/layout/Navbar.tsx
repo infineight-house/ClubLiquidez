@@ -20,16 +20,18 @@ const Navbar = () => {
   }
 
   const navItems = [
-    { name: 'Programs', href: '/programs' },
-    { name: 'Algo Trading', href: '/algo-trading' },
-    { name: 'Copy Trading', href: '/copy-trading' },
     { name: 'Academy', href: '/academy' },
+    { name: 'Programs', href: '/programs' },
+    { name: 'Algo Trading', href: '/algo-trading', authOnly: true },
+    { name: 'Copy Trading', href: '/copy-trading', authOnly: true },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ]
 
+  const visibleNavItems = navItems.filter((item) => !item.authOnly || user)
+
   const linkClass =
-    'flex items-center space-x-1 text-neutral-700 transition-colors duration-200 hover:text-black font-medium'
+    'flex items-center space-x-1 text-sm text-neutral-700 transition-colors duration-200 hover:text-black font-medium'
 
   return (
     <motion.nav
@@ -55,7 +57,7 @@ const Navbar = () => {
           </motion.div>
 
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <motion.div key={item.href} whileHover={{ y: -2 }} className="relative group">
                 <Link href={item.href} className={linkClass}>
                   {item.name}
@@ -157,12 +159,12 @@ const Navbar = () => {
             className="md:hidden border-t border-neutral-200 bg-white"
           >
             <div className="px-4 py-6 space-y-4">
-              {navItems.map((item) => (
+              {visibleNavItems.map((item) => (
                 <motion.div key={item.href} whileHover={{ x: 10 }} className="flex items-center space-x-3">
 
                   <Link
                     href={item.href}
-                    className="text-neutral-700 hover:text-black transition-colors duration-200 font-medium"
+                    className="text-sm text-neutral-700 hover:text-black transition-colors duration-200 font-medium"
                     onClick={() => setIsOpen(false)}
                   >
                     {item.name}

@@ -31,18 +31,19 @@ const BrandIntroSection = () => {
           </motion.div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-black mb-6 leading-tight">
-            Bullion rewards <span className="text-[#b89428]">preparation</span>—not adrenaline.
+            Markets reward <span className="text-[#b89428]">preparation</span>—not prediction.
           </h2>
 
           <p className="text-lg sm:text-xl text-neutral-600 mb-5 leading-relaxed tracking-tight">
-            The market trades differently than indices or FX pairs: wider swings, session personalities, and macro headlines
-            that move tape fast. Most retail curriculum glosses over that. We don&apos;t.
+            Markets move through changing volatility, liquidity and session conditions. Our curriculum teaches you how to read price behaviour, identify context, manage risk and build a repeatable decision-making process.
           </p>
 
-          <p className="text-base sm:text-lg text-neutral-600 mb-8 leading-relaxed max-w-3xl mx-auto">
-            ClubLiquidez is built around <strong className="text-black font-semibold">market mechanics</strong>: how liquidity
-            builds through London and New York, how to normalize risk when spreads widen, and how to journal trades so
-            improvement compounds. Education only—we never execute trades for you or sell alerts.
+
+          <p className="text-base sm:text-lg text-neutral-600 mb-3 leading-relaxed max-w-3xl mx-auto">
+            We approach trading as a skill that improves through deliberate practice, not guesswork. This means learning how to frame strategies around market structure, manage size and time your entries—not chasing signals or relying on hope.
+          </p>
+          <p className="text-sm sm:text-base text-neutral-500 font-medium mb-8 max-w-2xl mx-auto">
+            Education only—we never execute trades for you or sell alerts.
           </p>
 
           <p className="text-lg font-semibold tracking-tight text-[#b89428] border-t border-neutral-200 pt-8 max-w-2xl mx-auto">
