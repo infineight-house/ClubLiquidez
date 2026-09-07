@@ -104,7 +104,7 @@ const AuthPage = () => {
           toast.error(error.message || 'Failed to sign in')
         } else {
           toast.success('Successfully signed in!')
-          router.push('/')
+          router.push('/student/dashboard')
         }
       } else {
         if (!fullName || fullName.trim().length < 2) {

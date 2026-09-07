@@ -131,7 +131,7 @@ const Navbar = () => {
                     Sign In
                   </Button>
                 </Link>
-                <Link href="/contact">
+                <Link href="/student/login">
                   <Button variant="primary" size="sm">
                     Start learning
                   </Button>
@@ -207,7 +207,7 @@ const Navbar = () => {
                           Sign In
                         </Button>
                       </Link>
-                      <Link href="/contact" onClick={() => setIsOpen(false)}>
+                      <Link href="/student/login" onClick={() => setIsOpen(false)}>
                         <Button variant="primary" size="sm" className="w-full">
                           Start learning
                         </Button>

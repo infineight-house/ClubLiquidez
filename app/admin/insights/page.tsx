@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import AdminSidebarLayout from '@/components/layout/AdminSidebarLayout'
 import { Button } from '@/components/ui/Button'
 import { getInsights, createInsight, updateInsight, deleteInsight, type Insight } from '@/lib/supabase/insights'
 import toast from 'react-hot-toast'
@@ -323,31 +324,22 @@ const AdminInsightsPage = () => {
   }
 
   return (
-    <main className="min-h-screen bg-white text-black">
-      <Navbar />
-      
-      {/* Header */}
-      <section className="pt-32 pb-8 bg-white border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-black mb-2">
-                Insights <span className="text-[#b89428]">Admin</span>
-              </h1>
-              <p className="text-neutral-600 font-medium">Manage market insights and articles</p>
-            </div>
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleCreate}
-              className="flex items-center space-x-2"
-            >
-              <Plus className="w-5 h-5" />
-              <span>New Insight</span>
-            </Button>
-          </div>
-        </div>
-      </section>
+    <AdminSidebarLayout
+      title="Blog & Market Insights Manager"
+      subtitle="Create, edit, and publish market strategy and education articles."
+      actionButton={
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={handleCreate}
+          className="bg-[#b89428] text-black font-semibold flex items-center gap-1.5"
+        >
+          <Plus className="w-4 h-4" />
+          <span>New Insight</span>
+        </Button>
+      }
+    >
+      <div className="space-y-6">
 
       {/* Filters and Search */}
       <section className="py-6 bg-neutral-50 border-b border-neutral-200">
@@ -688,9 +680,8 @@ const AdminInsightsPage = () => {
           )}
         </div>
       </section>
-
-      <Footer />
-    </main>
+    </div>
+  </AdminSidebarLayout>
   )
 }
 

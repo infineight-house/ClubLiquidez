@@ -29,7 +29,7 @@ const HeroSection = () => {
   ]
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-16 md:pt-20 md:pb-0 bg-white text-black">
+    <section className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-16 md:pt-20 md:pb-0 bg-[#0B192C] bg-[radial-gradient(ellipse_80%_80%_at_20%_20%,rgba(30,64,110,0.35),transparent_70%)] text-white">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-16 items-center">
           <motion.div
@@ -42,35 +42,37 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="relative h-16 sm:h-20 md:h-24 w-auto"
+              className="w-full max-w-[420px] sm:max-w-[480px]"
             >
               <Image
-                src="/liquidez.png"
+                src="/lcplogo.png"
                 alt="ClubLiquidez Logo"
-                width={440}
-                height={68}
-                className="object-contain h-full w-auto"
+                width={480}
+                height={74}
+                className="w-full h-auto object-contain"
                 priority
               />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200 bg-neutral-100"
-            >
-              <span className="w-2 h-2 rounded-full bg-brand-gold animate-pulse" />
-              <span className="text-sm text-neutral-800 font-medium tracking-wide">
-                Market · Educational programs only
-              </span>
-            </motion.div>
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5"
+              >
+                <span className="w-2 h-2 rounded-full bg-brand-gold animate-pulse" />
+                <span className="text-sm text-neutral-300 font-medium tracking-wide">
+                  Market · Educational programs only
+                </span>
+              </motion.div>
+            </div>
 
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-5xl sm:text-6xl lg:text-[4.25rem] xl:text-7xl font-bold tracking-tight leading-[1.08] text-black"
+              className="text-5xl sm:text-6xl lg:text-[4.25rem] xl:text-7xl font-bold tracking-tight leading-[1.08] text-white"
             >
               Build The <span className="text-[#b89428]">Skill</span>{' '}
               to read the market.
@@ -80,17 +82,17 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.28 }}
-              className="text-lg sm:text-xl text-neutral-600 max-w-xl leading-relaxed tracking-tight"
+              className="text-lg sm:text-xl text-neutral-300 max-w-xl leading-relaxed tracking-tight"
             >
 
-              Learn how to read market <em className="text-black not-italic font-semibold">structure</em>, liquidity, sessions, volatility and risk,  and turn that framework into a repeatable trading process.
+              Learn how to read market <em className="text-white not-italic font-semibold">structure</em>, liquidity, sessions, volatility and risk,  and turn that framework into a repeatable trading process.
             </motion.p>
 
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.34 }}
-              className="text-base text-neutral-600 max-w-xl leading-relaxed border-l-2 border-brand-gold pl-4"
+              className="text-base text-neutral-400 max-w-xl leading-relaxed border-l-2 border-brand-gold pl-4"
             >
               Small cohorts • Live market drills • Mentorship • Optional classroom sessions in Kanchipuram.
               No signals. No managed accounts. No promises of returns.
@@ -112,6 +114,7 @@ const HeroSection = () => {
                 <Button
                   variant="outline"
                   size="lg"
+                  className="border-white/20 text-white hover:bg-white/10 hover:text-white"
                 >
                   Explore the Curriculum
                 </Button>
@@ -126,12 +129,12 @@ const HeroSection = () => {
             >
               {features.map((feature) => (
                 <div key={feature.title} className="flex gap-3">
-                  <div className="p-2.5 rounded-xl bg-neutral-100 border border-neutral-200 h-fit">
+                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 h-fit">
                     <feature.icon className="w-5 h-5 text-[#b89428]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-black text-sm">{feature.title}</h3>
-                    <p className="text-xs text-neutral-600 leading-snug mt-0.5">{feature.description}</p>
+                    <h3 className="font-semibold text-white text-sm">{feature.title}</h3>
+                    <p className="text-xs text-neutral-400 leading-snug mt-0.5">{feature.description}</p>
                   </div>
                 </div>
               ))}
